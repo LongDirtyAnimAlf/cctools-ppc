@@ -122,14 +122,29 @@ bool Options::FileInfo::checkFileExists(const Options& options, const char *p)
 	struct stat statBuffer;
 	if (p == NULL) 
 	  p = path;
-	if ( stat(p, &statBuffer) == 0 ) {
-		if (p != path) path = strdup(p);
+
+	char *strPtr = strdup(p);	
+	//#if defined(__CYGWIN__)
+	char *q = strPtr;	
+	while ((q = strchr(q, '/')) != NULL)
+        *q++ = '\\';
+	strPtr[strcspn(strPtr, "\r\n")] = 0;
+	//#endif
+
+	//warning("Looking for file \"%s\"", fileOfExports);
+	//warning("file not found: %s", p);
+	fprintf (stderr, "Looking for file \"%s\"", strPtr);
+	  
+	if ( stat(strPtr, &statBuffer) == 0 ) {
+		if (strPtr != path) path = strdup(strPtr);
 		fileLen = statBuffer.st_size;
 		modTime = statBuffer.st_mtime;
+		fprintf (stderr, " ... success !!\r\n");
 		return true;
 	}
 	if ( options.dumpDependencyInfo() )
-		options.dumpDependency(Options::depNotFound, p);
+		options.dumpDependency(Options::depNotFound, strPtr);
+	fprintf (stderr, " ... failure.\r\n");
     return false;
 }
 
@@ -5463,7 +5478,7 @@ void Options::checkIllegalOptionCombinations()
 	}
 
 	// <rdar://problem/17598404> warn if building an embedded iOS dylib for pre-iOS 8
-	// <rdar://problem/18935714> How can we suppress "ld: warning: embedded dylibs/frameworks only run on iOS 8 or later” when building XCTest?
+	// <rdar://problem/18935714> How can we suppress "ld: warning: embedded dylibs/frameworks only run on iOS 8 or later? when building XCTest?
 	if ( (fOutputKind == Options::kDynamicLibrary) && (fIOSVersionMin != ld::iOSVersionUnset) && (fDylibInstallName != NULL) ) {
 		if ( !min_iOS(ld::iOS_8_0) && (fDylibInstallName[0] == '@') && !fEncryptableForceOff )
 			warning("embedded dylibs/frameworks only run on iOS 8 or later");

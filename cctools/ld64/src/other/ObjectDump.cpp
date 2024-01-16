@@ -1236,7 +1236,7 @@ static ld::relocatable::File* createReader(const char* path)
 {
 	struct stat stat_buf;
 	
-	int fd = ::open(path, O_RDONLY, 0);
+	int fd = ::open(path, O_RDONLY | O_BINARY, 0);
 	if ( fd == -1 )
 		throwf("cannot open file: %s", path);
 	::fstat(fd, &stat_buf);

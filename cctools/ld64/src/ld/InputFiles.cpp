@@ -222,7 +222,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
 {
 	// map in whole file
 	uint64_t len = info.fileLen;
-	int fd = ::open(info.path, O_RDONLY, 0);
+	int fd = ::open(info.path, O_RDONLY | O_BINARY, 0);
 	if ( fd == -1 )
 		throwf("can't open file, errno=%d", errno);
 	if ( info.fileLen < 20 )
@@ -843,7 +843,7 @@ void InputFiles::inferArchitecture(Options& opts, const char** archName)
 	uint8_t buffer[4096];
 	const std::vector<Options::FileInfo>& files = opts.getInputFiles();
 	for (std::vector<Options::FileInfo>::const_iterator it = files.begin(); it != files.end(); ++it) {
-		int fd = ::open(it->path, O_RDONLY, 0);
+		int fd = ::open(it->path, O_RDONLY | O_BINARY, 0);
 		if ( fd != -1 ) {
 			struct stat stat_buf;
 			if ( fstat(fd, &stat_buf) != -1) {

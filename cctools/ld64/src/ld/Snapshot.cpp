@@ -158,7 +158,7 @@ void Snapshot::copyFileToSnapshot(const char *sourcePath, const char *subdir, ch
     if (path == NULL) path = buf;
     buildUniquePath(path, subdir, file);
     int out_fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
-    int in_fd = open(sourcePath, O_RDONLY);
+    int in_fd = open(sourcePath, O_RDONLY | O_BINARY);
     int len;
     if (out_fd != -1 && in_fd != -1) {
         do {

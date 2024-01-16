@@ -2268,7 +2268,7 @@ static void dump(const char* path)
 	struct stat stat_buf;
 	
 	try {
-		int fd = ::open(path, O_RDONLY, 0);
+		int fd = ::open(path, O_RDONLY | O_BINARY, 0);
 		if ( fd == -1 )
 			throw "cannot open file";
 		if ( ::fstat(fd, &stat_buf) != 0 ) 

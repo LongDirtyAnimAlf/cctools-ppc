@@ -123,7 +123,7 @@ MultiArchRebaser::MultiArchRebaser(const char* path, bool writable)
  : fMappingAddress(0), fFileSize(0)
 {
 	// map in whole file
-	int fd = ::open(path, (writable ? O_RDWR : O_RDONLY), 0);
+	int fd = ::open(path, (writable ? O_RDWR : O_RDONLY | O_BINARY), 0);
 	if ( fd == -1 )
 		throwf("can't open file %s, errno=%d", path, errno);
 	struct stat stat_buf;
@@ -776,7 +776,7 @@ void Rebaser<x86_64>::setRelocBase()
 static void copyFile(const char* srcFile, const char* dstFile)
 {
 	// open files 
-	int src = open(srcFile, O_RDONLY);	
+	int src = open(srcFile, O_RDONLY | O_BINARY);	
 	if ( src == -1 )
 		throwf("can't open file %s, errno=%d", srcFile, errno);
 	struct stat stat_buf;

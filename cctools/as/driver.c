@@ -18,6 +18,10 @@
 #include "stuff/allocate.h"
 #include <mach-o/dyld.h>
 
+#if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__)
+#include <windows.h>
+#endif
+
 /* used by error calls (exported) */
 char *progname = NULL;
 
@@ -32,6 +36,8 @@ char **envp)
     const char *LIB = "../libexec/as/";
     const char *LOCALLIB = "../local/libexec/as/";
     const char *AS = "/as";
+    //const char *LOCALLIB = "../libexec/gcc/darwin/";
+    //const char *AS = "/as.exe";
 
     int i, j;
     uint32_t count, verbose, run_clang;

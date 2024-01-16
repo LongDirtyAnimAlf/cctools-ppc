@@ -115,7 +115,13 @@ static
 const
 #endif /* PPC */
 char is_end_of_line_tab[256] = {
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, /* @abcdefghijklmno */
+  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+#if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__)
+  1,
+#else
+  0,
+#endif
+  0, 0, /* @abcdefghijklmno */
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*                  */
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*                  */
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, /* 0123456789:;<=>? */

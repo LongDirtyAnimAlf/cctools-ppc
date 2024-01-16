@@ -259,7 +259,7 @@ BitcodeAtom::BitcodeAtom(BitcodeTempFile& tempfile)
 BitcodeTempFile::BitcodeTempFile(const char* path, bool deleteAfterRead = true)
     : _path(path), _deleteAfterRead(deleteAfterRead)
 {
-    int fd = ::open(path, O_RDONLY, 0);
+    int fd = ::open(path, O_RDONLY | O_BINARY, 0);
     if ( fd == -1 )
         throwf("could not open bitcode temp file: %s", path);
     struct stat stat_buf;
