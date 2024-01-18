@@ -75,7 +75,6 @@ struct CFI_Atom_Info {
 			CFI_Reference<A>	function;
 			CFI_Reference<A>	cie;
 			CFI_Reference<A>	lsda;
-			pint_t			functionSize;
 			uint32_t		compactUnwindInfo;
 		}			fdeInfo;
 		struct {
@@ -235,7 +234,6 @@ const char* DwarfInstructions<A,R>::parseCFIs(A& addressSpace, pint_t ehSectionS
 			entry->u.fdeInfo.function.targetAddress = CFI_INVALID_ADDRESS;
 			entry->u.fdeInfo.cie.targetAddress = CFI_INVALID_ADDRESS;
 			entry->u.fdeInfo.lsda.targetAddress = CFI_INVALID_ADDRESS;
-			entry->u.fdeInfo.functionSize = 0;
 			uint32_t ciePointer = addressSpace.get32(p);
 			pint_t cieStart = p-ciePointer;
 			// validate pointer to CIE is within section
@@ -259,7 +257,6 @@ const char* DwarfInstructions<A,R>::parseCFIs(A& addressSpace, pint_t ehSectionS
 			entry->u.fdeInfo.function.targetAddress = pcStart;
 			entry->u.fdeInfo.function.offsetInCFI = offsetOfFunctionAddress;
 			entry->u.fdeInfo.function.encodingOfTargetAddress = cieInfo.pointerEncoding;
-			entry->u.fdeInfo.functionSize = pcRange;
 			// check for augmentation length
 			if ( cieInfo.fdesHaveAugmentationData ) {
 				uintptr_t augLen = addressSpace.getULEB128(p, nextCFI);
@@ -1793,16 +1790,16 @@ compact_unwind_encoding_t DwarfInstructions<A,R>::createCompactEncodingFromProlo
 //	ppc64 specific functions
 //
 template <typename A, typename R>
-int DwarfInstructions<A,R>::lastRestoreReg(const Registers_ppc64&) 
+int DwarfInstructions<A,R>::lastRestoreReg(const Registers_ppc64&)
 {
 	COMPILE_TIME_ASSERT( (int)CFI_Parser<A>::kMaxRegisterNumber > (int)UNW_PPC_SPEFSCR );
-	return UNW_PPC_SPEFSCR; 
+	return UNW_PPC_SPEFSCR;
 }
 
 template <typename A, typename R>
-bool DwarfInstructions<A,R>::isReturnAddressRegister(int regNum, const Registers_ppc64&) 
+bool DwarfInstructions<A,R>::isReturnAddressRegister(int regNum, const Registers_ppc64&)
 {
-	return (regNum == UNW_PPC_LR); 
+	return (regNum == UNW_PPC_LR);
 }
 
 //
@@ -1867,9 +1864,9 @@ bool DwarfInstructions<A,R>::checkRegisterPair(uint32_t reg, const typename CFI_
 	return false;
 }
 template <typename A, typename R>
-typename A::pint_t DwarfInstructions<A,R>::getCFA(A& addressSpace, const typename CFI_Parser<A>::PrologInfo& prolog, 
+typename A::pint_t DwarfInstructions<A,R>::getCFA(A& addressSpace, const typename CFI_Parser<A>::PrologInfo& prolog,
 										const Registers_ppc64& registers)
-{	
+{
 	if ( prolog.cfaRegister != 0 )
 		return registers.getRegister(prolog.cfaRegister) + prolog.cfaRegisterOffset;
 	else if ( prolog.cfaExpression != 0 )
@@ -1880,7 +1877,7 @@ typename A::pint_t DwarfInstructions<A,R>::getCFA(A& addressSpace, const typenam
 
 
 template <typename A, typename R>
-compact_unwind_encoding_t DwarfInstructions<A,R>::encodeToUseDwarf(const Registers_ppc64&) 
+compact_unwind_encoding_t DwarfInstructions<A,R>::encodeToUseDwarf(const Registers_ppc64&)
 {
 	return UNWIND_X86_MODE_DWARF;
 }

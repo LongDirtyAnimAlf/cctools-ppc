@@ -35,8 +35,6 @@
 #include "parsers/macho_relocatable_file.h"
 #include "parsers/lto_file.h"
 
-#include "version.h"
-
 #ifdef __GLIBCXX__
 #include <algorithm>
 #endif
@@ -876,6 +874,9 @@ void dumper::dumpFixup(const ld::Fixup* ref)
 		case ld::Fixup::kindStoreARM64PCRelToGOT:
 			printf(", then store as 32-bit delta to GOT entry");
 			break;
+//		case ld::Fixup::kindStoreARM64PointerToGOT32:
+//			printf(", then store as 32-bit pointer to GOT entry");
+//			break;
 		case ld::Fixup::kindDtraceExtra:
 			printf("dtrace static probe extra info");
 			break;
@@ -1236,7 +1237,7 @@ static ld::relocatable::File* createReader(const char* path)
 {
 	struct stat stat_buf;
 	
-	int fd = ::open(path, O_RDONLY | O_BINARY, 0);
+	int fd = ::open(path, O_RDONLY, 0);
 	if ( fd == -1 )
 		throwf("cannot open file: %s", path);
 	::fstat(fd, &stat_buf);
@@ -1325,7 +1326,7 @@ static
 void
 usage()
 {
-	fprintf(stderr, "ObjectDump options:\n"
+	fprintf(stdout, "ObjectDump options:\n"
 			"\t-no_content\tdon't dump contents\n"
 			"\t-no_section\tdon't dump section name\n"
 			"\t-no_defintion\tdon't dump definition kind\n"

@@ -436,7 +436,7 @@ char *filename)
     int fd;
     struct stat stat;
 
-	if((fd = open(filename, O_RDONLY)) == -1)
+	if((fd = open(filename, O_RDONLY | O_BINARY)) == -1)
 	    system_fatal("can't open: %s", filename);
 	if(fstat(fd, &stat) == -1)
 	    system_fatal("can't stat: %s", filename);

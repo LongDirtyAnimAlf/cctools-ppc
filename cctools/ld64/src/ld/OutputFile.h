@@ -147,6 +147,7 @@ public:
 		uint8_t			targetSectionIndex;
 		uint8_t			referenceKind;
 	};
+	static void					dumpAtomsBySection(ld::Internal& state, bool);
 
 private:
 	void						writeAtoms(ld::Internal& state, uint8_t* wholeBuffer);
@@ -188,6 +189,7 @@ private:
 	void						updateLINKEDITAddresses(ld::Internal& state);
 	void						applyFixUps(ld::Internal& state, uint64_t mhAddress, const ld::Atom*  atom, uint8_t* buffer);
 	uint64_t					addressOf(const ld::Internal& state, const ld::Fixup* fixup, const ld::Atom** target);
+	uint64_t					addressAndTarget(const ld::Internal& state, const ld::Fixup* fixup, const ld::Atom** target);
 	bool						targetIsThumb(ld::Internal& state, const ld::Fixup* fixup);
 	uint32_t					lazyBindingInfoOffsetForLazyPointerAddress(uint64_t lpAddress);
 	void						copyNoOps(uint8_t* from, uint8_t* to, bool thumb);
@@ -204,6 +206,7 @@ private:
 	void						makeSplitSegInfo(ld::Internal& state);
 	void						makeSplitSegInfoV2(ld::Internal& state);
 	void						writeMapFile(ld::Internal& state);
+	void						writeJSONEntry(ld::Internal& state);
 	uint64_t					lookBackAddend(ld::Fixup::iterator fit);
 	bool						takesNoDiskSpace(const ld::Section* sect);
 	bool						hasZeroForFileOffset(const ld::Section* sect);
@@ -242,7 +245,6 @@ private:
 																							const ld::Fixup* fixup);
 	uint64_t					sectionOffsetOf(const ld::Internal& state, const ld::Fixup* fixup);
 	uint64_t					tlvTemplateOffsetOf(const ld::Internal& state, const ld::Fixup* fixup);
-	void						dumpAtomsBySection(ld::Internal& state, bool);
 	void						synthesizeDebugNotes(ld::Internal& state);
 	const char*					assureFullPath(const char* path);
 	void						noteTextReloc(const ld::Atom* atom, const ld::Atom* target);

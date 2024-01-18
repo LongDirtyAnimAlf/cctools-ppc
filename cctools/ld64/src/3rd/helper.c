@@ -1,4 +1,4 @@
-const char ldVersionString[] = "253.9\n";
+const char ldVersionString[] = "@(#)PROGRAM:ld  PROJECT:ld64-274.2\n";
 
 #ifndef __APPLE__
 
@@ -36,8 +36,12 @@ void __assert_rtn(const char *func, const char *file, int line, const char *msg)
     __assert(msg, file, line, func);
 #elif defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__)
     __assert(msg, line, file);
-#else
+#elif defined(__GLIBC__) || defined(__MINGW32__)
     __assert(msg, file, line);
+#else
+    fprintf(stderr, "Assertion failed: %s (%s: %s: %d)\n", msg, file, func, line);
+    fflush(NULL);
+    abort();
 #endif /* __FreeBSD__ */
 }
 
@@ -108,6 +112,26 @@ int _NSGetExecutablePath(char *epath, unsigned int *size)
         return 0;
     }
     return -1;
+#elif defined(__CYGWIN__) || defined(__MINGW32__)
+  char *p;
+  char full_path[MAX_PATH];
+  unsigned int l = 0;
+  l = GetModuleFileNameA(NULL, full_path, MAX_PATH);
+  if ((l == 0) || (l == MAX_PATH)) return -1;
+  full_path[l] = '\0';
+  while ((p = strchr (full_path, '\\')) != NULL)
+  {
+    *p = '/';
+  }
+#if defined(__CYGWIN__)
+  p = strchr(full_path, ':');
+  if (p)
+    *p = '/';
+  snprintf(epath, *size, "%c%s%c%s", '/', "cygdrive", '/', full_path);
+#else
+  snprintf(epath, *size, "%s", full_path);
+#endif
+  return 0;
 #else
     int bufsize = *size;
     int ret_size;

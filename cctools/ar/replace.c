@@ -125,7 +125,7 @@ replace(argv)
 	mods = (options & (AR_A|AR_B));
 	for (curfd = tfd1; get_arobj(afd);) {
 		if (*argv && (file = files(argv))) {
-			if ((sfd = open(file, O_RDONLY)) < 0) {
+			if ((sfd = open(file, O_RDONLY | O_BINARY)) < 0) {
 				errflg = 1;
 				warn("%s", file);
 				goto useold;
@@ -173,7 +173,7 @@ useold:			SETCF(afd, archive, curfd, tname, RPAD|WPAD);
 append:	while ((file = *argv++)) {
 		if (options & AR_V)
 			(void)printf("a - %s\n", file);
-		if ((sfd = open(file, O_RDONLY)) < 0) {
+		if ((sfd = open(file, O_RDONLY | O_BINARY)) < 0) {
 			errflg = 1;
 			warn("%s", file);
 			continue;

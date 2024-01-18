@@ -337,7 +337,8 @@ char **envp)
 	    exit(EXIT_FAILURE);
 
 	if(output != NULL)
-	    writeout(archs, narchs, output, 0777, TRUE, FALSE, FALSE, NULL);
+	    writeout(archs, narchs, output, 0777, TRUE, FALSE, FALSE, FALSE,
+		     NULL);
 	else
 	    write_on_input(archs, narchs, input);
 
@@ -416,7 +417,9 @@ char *input)
 	    system_error("can't open input file: %s for writing", input);
 
 	for(i = 0; i < narchs; i++){
-	    if(archs[i].fat_arch != NULL)
+	    if(archs[i].fat_arch64 != NULL)
+		offset = archs[i].fat_arch64->offset;
+	    else if(archs[i].fat_arch != NULL)
 		offset = archs[i].fat_arch->offset;
 	    else
 		offset = 0;
@@ -660,6 +663,11 @@ uint32_t *header_size)
     struct arch_flag arch_flag;
     struct rpath_command *rpath1, *rpath2;
     enum bool delete;
+
+	for(i = 0; i < nrpaths; i++)
+	    rpaths[i].found = FALSE;
+	for(i = 0; i < ndelete_rpaths; i++)
+	    delete_rpaths[i].found = FALSE;
 
 	/*
 	 * Make a pass through the load commands and figure out what the new

@@ -1,57 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/param.h>
-
-#include <mach-o/dyld.h>
-
-#ifndef HAVE_UTIMENS
-/*
- * utimens utility to set file times with sub-second resolution when available.
- * This is done by using utimensat if available at compile time.
- *
- * macOS is special cased: utimensat is only visible at compile time when
- * building for macOS >= 10.13, but with proper runtime checks we can make
- * builds targeted at older versions also work with sub-second resolution when
- * available. This is especially important because APFS introduces sub-second
- * timestamp resolution.
- */
-#include <utime.h>
-
-#ifdef HAVE_UTIMENSAT
-#include <fcntl.h>
-#endif
-
-#if defined(__APPLE__) && defined(HAVE_UTIMENSAT)
-#pragma weak utimensat
-#endif
-
-int utimens(const char *path, const struct timespec times[2])
-{
-#ifdef HAVE_UTIMENSAT
-#ifdef __APPLE__
-    if (utimensat != NULL)
-#endif
-	return utimensat(AT_FDCWD, path, times, 0);
-#endif
-
-    /* Fall back to truncating the timestamp to 1s resolution. */
-#ifndef __OPENSTEP__
-    struct utimbuf timep;
-    timep.actime = times[0].tv_sec;
-    timep.modtime = times[1].tv_sec;
-    return utime(path, &timep);
-#else
-    time_t timep[2];
-    timep[0] = times[0].tv_sec;
-    timep[1] = times[1].tv_sec;
-    return utime(path, timep);
-#endif
-}
-#endif /* HAVE_UTIMENS */
 
 #ifndef __APPLE__
 
@@ -78,9 +30,13 @@ int utimens(const char *path, const struct timespec times[2])
 #include <windows.h>
 #endif
 
+//int getExecutablePath(char *epath, unsigned int *size)
 int _NSGetExecutablePath(char *epath, unsigned int *size)
 {
-#if defined(__FreeBSD__) || defined(__DragonFly__)
+#ifdef __APPLE__
+    if (_NSGetExecutablePath(epath, size) != 0)
+      return nullptr;
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
     int mib[4];
     mib[0] = CTL_KERN;
     mib[1] = KERN_PROC;
@@ -440,53 +396,6 @@ size_t strlcpy(char *dst, const char *src, size_t siz)
     return(s - src - 1);        /* count does not include NUL */
 }
 
-#ifndef HAVE_REALLOCF
-/*-
- * SPDX-License-Identifier: BSD-2-Clause-FreeBSD
- *
- * Copyright (c) 1998 M. Warner Losh <imp@FreeBSD.org>
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- */
-void *reallocf(void *ptr, size_t size)
-{
-	void *nptr;
-
-	nptr = realloc(ptr, size);
-
-	/*
-	 * When the System V compatibility option (malloc "V" flag) is
-	 * in effect, realloc(ptr, 0) frees the memory and returns NULL.
-	 * So, to avoid double free, call free() only when size != 0.
-	 * realloc(ptr, 0) can't fail when ptr != NULL.
-	 */
-	if (!nptr && ptr && size != 0)
-		free(ptr);
-	return (nptr);
-}
-#endif /* !HAVE_REALLOCF */
-
-#endif /* !__APPLE__ */
-
 char *find_executable(const char *name)
 {
     char *p;
@@ -504,12 +413,19 @@ char *find_executable(const char *name)
     if (_NSGetExecutablePath(cctools_path, &bufsize) == -1)
         cctools_path[0] = '\0';
 
+#if defined(__MINGW32__)
+    if ((p = strrchr(cctools_path, '\\')))
+        *p = '\0';
+    snprintf(path, sizeof(path), "%s;%s", cctools_path, env_path);
+    p = strtok(path, ";");
+#else
     if ((p = strrchr(cctools_path, '/')))
         *p = '\0';
 
     snprintf(path, sizeof(path), "%s:%s", cctools_path, env_path);
 
     p = strtok(path, ":");
+#endif
 
     while (p != NULL)
     {
@@ -521,18 +437,61 @@ char *find_executable(const char *name)
             free(p);
         }
 
+	printf("File searcher. Looking for %s\r\n", epath);
+
         if (stat(epath, &st) == 0 && access(epath, F_OK|X_OK) == 0)
             return strdup(epath);
 
+#if defined(__MINGW32__)
+        p = strtok(NULL, ";");
+#else
         p = strtok(NULL, ":");
+#endif
     }
 
     return NULL;
 }
 
+
 #ifndef DISABLE_CLANG_AS
 char *find_clang()
 {
-    find_executable("clang");
+    return(find_executable("clang"));
 }
 #endif /* ! DISABLE_CLANG_AS */
+
+#else
+
+#ifndef DISABLE_CLANG_AS
+char *find_clang()
+{
+    char *p, *path = getenv("PATH");
+    char clang[MAX_PATH];
+    struct stat st;
+
+    if (!path)
+        return NULL;
+
+    path = strdup(path);
+
+    if (!path)
+        return NULL;
+
+    p = strtok(path, ":");
+
+    while (p != NULL)
+    {
+        snprintf(clang, sizeof(clang), "%s/clang", p);
+
+        if (stat(clang, &st) == 0 && access(clang, F_OK|X_OK) == 0)
+            return strdup(clang);
+
+        p = strtok(NULL, ":");
+    }
+
+    free(path);
+    return NULL;
+}
+#endif /* ! DISABLE_CLANG_AS */
+
+#endif /* __APPLE__ */

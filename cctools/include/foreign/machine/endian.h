@@ -46,4 +46,5 @@
 #endif
 
 #endif /* _BSD_MACHINE_ENDIAN_H_ */
-#endif /* __FreeBSD__ || __NetBSD__ || __OpenBSD__ || __DragonFly__ */
+#endif /* __FreeBSD__   || __NetBSD__ || __OpenBSD__ ||
+          __DragonFly__ || __CYGWIN__ */

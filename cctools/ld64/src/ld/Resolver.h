@@ -72,7 +72,7 @@ public:
 		
 		void				resolve();
 
-	
+
 private:
 	struct WhyLiveBackChain
 	{
@@ -103,6 +103,7 @@ private:
 	static unsigned int		ppcSubTypeIndex(uint32_t subtype);
 	bool					printReferencedBy(const char* name, SymbolTable::IndirectBindingSlot slot);
 	void					tweakWeakness();
+	void					buildArchivesList();
 	void					doLinkerOption(const std::vector<const char*>& linkerOption, const char* fileName);
 	void					dumpAtoms();
 

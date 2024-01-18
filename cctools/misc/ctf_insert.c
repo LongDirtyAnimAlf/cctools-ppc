@@ -127,7 +127,7 @@ char **envp)
 			arch_usage();
 			usage();
 		    }
-		    if((fd = open(argv[i+2], O_RDONLY, 0)) == -1)
+		    if((fd = open(argv[i+2], O_RDONLY | O_BINARY, 0)) == -1)
 			system_fatal("can't open file: %s", argv[i+2]);
 		    if(fstat(fd, &stat_buf) == -1)
 			system_fatal("can't stat file: %s", argv[i+2]);
@@ -178,7 +178,7 @@ char **envp)
 		      arch_ctfs[i].arch_flag.name, arch_ctfs[i].filename);
 	}
 
-	writeout(archs, narchs, output, 0777, TRUE, FALSE, FALSE, NULL);
+	writeout(archs, narchs, output, 0777, TRUE, FALSE, FALSE, FALSE, NULL);
 
 	if(errors)
 	    return(EXIT_FAILURE);

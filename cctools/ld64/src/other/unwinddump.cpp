@@ -39,7 +39,6 @@
 #include "MachOFileAbstraction.hpp"
 #include "Architectures.hpp"
 
-#include "version.h"
 
  __attribute__((noreturn))
 void throwf(const char* format, ...) 
@@ -166,6 +165,7 @@ bool UnwindPrinter<arm64>::validFile(const uint8_t* fileContent)
 }
 #endif
 
+
 template <>
 bool UnwindPrinter<arm>::validFile(const uint8_t* fileContent)
 {	
@@ -243,7 +243,7 @@ const char* UnwindPrinter<A>::functionName(pint_t addr, uint32_t* offset)
 	for (uint32_t i=0; i < fSymbolCount; ++i) {
 		uint8_t type = fSymbols[i].n_type();
 		if ( ((type & N_STAB) == 0) && ((type & N_TYPE) == N_SECT) ) {
-			uint32_t value = fSymbols[i].n_value();
+			pint_t value = fSymbols[i].n_value();
 			if ( value == addr ) {
 				const char* r = &fStrings[fSymbols[i].n_strx()];
 				return r;
@@ -439,7 +439,7 @@ void UnwindPrinter<x86_64>::decode(uint32_t encoding, const uint8_t* funcStart, 
 				// renumber registers back to standard numbers
 				int registers[6];
 				bool used[7] = { false, false, false, false, false, false, false };
-				for (uint32_t i=0; i < regCount; ++i) { // ld64-port: int -> uint32_t
+				for (int i=0; i < regCount; ++i) {
 					int renum = 0; 
 					for (int u=1; u < 7; ++u) {
 						if ( !used[u] ) {
@@ -453,7 +453,7 @@ void UnwindPrinter<x86_64>::decode(uint32_t encoding, const uint8_t* funcStart, 
 					}
 				}
 				bool needComma = false;
-				for (uint32_t i=0; i < regCount; ++i) { // ld64-port: int -> uint32_t
+				for (int i=0; i < regCount; ++i) {
 					if ( needComma ) 
 						strcat(str, ",");
 					else
@@ -620,7 +620,7 @@ void UnwindPrinter<x86>::decode(uint32_t encoding, const uint8_t* funcStart, cha
 				// renumber registers back to standard numbers
 				int registers[6];
 				bool used[7] = { false, false, false, false, false, false, false };
-				for (uint32_t i=0; i < regCount; ++i) { // ld64-port: int -> uint32_t
+				for (int i=0; i < regCount; ++i) {
 					int renum = 0; 
 					for (int u=1; u < 7; ++u) {
 						if ( !used[u] ) {
@@ -634,7 +634,7 @@ void UnwindPrinter<x86>::decode(uint32_t encoding, const uint8_t* funcStart, cha
 					}
 				}
 				bool needComma = false;
-				for (uint32_t i=0; i < regCount; ++i) { // ld64-port: int -> uint32_t
+				for (int i=0; i < regCount; ++i) {
 					if ( needComma ) 
 						strcat(str, ",");
 					else
@@ -759,6 +759,7 @@ void UnwindPrinter<arm64>::decode(uint32_t encoding, const uint8_t* funcStart, c
 }
 #endif
 
+
 template <>
 void UnwindPrinter<arm>::decode(uint32_t encoding, const uint8_t* funcStart, char* str)
 {
@@ -874,6 +875,7 @@ const char* UnwindPrinter<arm64>::personalityName(const macho_relocation_info<ar
 	return &fStrings[sym.n_strx()];
 }
 #endif
+
 
 template <>
 const char* UnwindPrinter<arm>::personalityName(const macho_relocation_info<arm::P>* reloc)
@@ -1079,7 +1081,7 @@ static void dump(const char* path, const std::set<cpu_type_t>& onlyArchs, bool s
 	struct stat stat_buf;
 	
 	try {
-		int fd = ::open(path, O_RDONLY | O_BINARY, 0);
+		int fd = ::open(path, O_RDONLY, 0);
 		if ( fd == -1 )
 			throw "cannot open file";
 		if ( ::fstat(fd, &stat_buf) != 0 ) 
@@ -1141,7 +1143,7 @@ static void dump(const char* path, const std::set<cpu_type_t>& onlyArchs, bool s
 		else if ( UnwindPrinter<arm64>::validFile(p) && onlyArchs.count(CPU_TYPE_ARM64) ) {
 			UnwindPrinter<arm64>::make(p, length, path, showFunctionNames);
 		}
-#endif		
+#endif
 		else if ( UnwindPrinter<arm>::validFile(p) && onlyArchs.count(CPU_TYPE_ARM) ) {
 			UnwindPrinter<arm>::make(p, length, path, showFunctionNames);
 		}
@@ -1168,7 +1170,7 @@ int main(int argc, const char* argv[])
 				if(strcmp(arg, "--version") == 0){
 					/* Implement a gnu-style --version.  */
 					fprintf(stdout, "xtools-%s unwinddump %s\nBased on Apple Inc. ld64-%s\n",
-		        	XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
+				XTOOLS_VERSION, PACKAGE_VERSION, LD64_VERSION_NUM);
 					exit(0);
 				} else if(strcmp(arg, "--help") == 0){
 					fprintf(stdout, "unwinddump: [-arch] [no_symbols] file\n");

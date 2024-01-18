@@ -100,7 +100,7 @@ append(argv)
 	/* Read from disk, write to an archive; pad on write. */
 	SETCF(0, 0, afd, archive, WPAD);
 	for (eval = 0; (file = *argv++);) {
-		if ((fd = open(file, O_RDONLY)) < 0) {
+		if ((fd = open(file, O_RDONLY | O_BINARY)) < 0) {
 			warn("%s", file);
 			eval = 1;
 			continue;

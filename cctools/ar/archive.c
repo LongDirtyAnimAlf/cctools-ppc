@@ -90,6 +90,10 @@ static char hb[sizeof(HDR) + 1];	/* real header */
 
 int archive_opened_for_writing = 0;
 
+#ifndef DEFFILEMODE
+#define DEFFILEMODE S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH
+#endif
+
 int
 open_archive(mode)
 	int mode;
@@ -114,7 +118,7 @@ open_archive(mode)
 	if ((fd = open(archive, mode, DEFFILEMODE)) < 0)
 		error(archive);
 
-	if((mode & O_ACCMODE) == O_RDONLY)
+	if((mode & O_ACCMODE) == O_RDONLY | O_BINARY)
 	    goto skip_flock;
 
 	/* 
@@ -178,11 +182,11 @@ opened:
 skip_flock:
 
 	/*
-	 * If not created, O_RDONLY|O_RDWR indicates that it has to be
+	 * If not created, O_RDONLY | O_BINARY|O_RDWR indicates that it has to be
 	 * in archive format.
 	 */
 	if (!created &&
-	    ((mode & O_ACCMODE) == O_RDONLY || (mode & O_ACCMODE) == O_RDWR)) {
+	    ((mode & O_ACCMODE) == O_RDONLY | O_BINARY || (mode & O_ACCMODE) == O_RDWR)) {
 		if ((nr = read(fd, buf, SARMAG) != SARMAG)) {
 			if (nr >= 0)
 				badfmt();

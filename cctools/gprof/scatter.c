@@ -612,7 +612,7 @@ void)
 	if((treefile = fopen("gmon.tree", "w")) == NULL)
 	    system_fatal("can't create file: gmon.tree");
 	*/
-	if((what_fd = open("whatsloaded", O_RDONLY)) >= 0){
+	if((what_fd = open("whatsloaded", O_RDONLY | O_BINARY)) >= 0){
 	    fstat(what_fd, &buf);
 	    whatsloaded = mmap(0, buf.st_size, PROT_READ|PROT_WRITE,
 			       MAP_FILE|MAP_PRIVATE, what_fd, 0);

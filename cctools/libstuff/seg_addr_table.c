@@ -88,7 +88,7 @@ uint32_t *table_size)
     char *file_addr, *endp;
     struct seg_addr_table *new_seg_addr_table;
 
-	if((fd = open(file_name, O_RDONLY, 0)) == -1)
+	if((fd = open(file_name, O_RDONLY | O_BINARY, 0)) == -1)
 	    system_fatal("Can't open: %s for %s %s",
 		    file_name, flag, argument);
 	if(fstat(fd, &stat_buf) == -1)
@@ -245,7 +245,7 @@ void *cookie)
     struct seg_addr_table entry;
 
 	file_addr = NULL;
-	if((fd = open(file_name, O_RDONLY, 0)) == -1)
+	if((fd = open(file_name, O_RDONLY | O_BINARY, 0)) == -1)
 	    system_fatal("can't open file: %s", file_name);
 	if(fstat(fd, &stat_buf) == -1)
 	    system_fatal("can't stat file: %s", file_name);

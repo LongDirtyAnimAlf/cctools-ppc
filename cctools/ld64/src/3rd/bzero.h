@@ -1,6 +1,8 @@
 #ifndef BZERO_H
 #define BZERO_H
 
+#include <cinttypes>
+
 #ifndef bzero
 #define bzero(b,len) (memset((b), '\0', (len)), (void) 0)
 #endif

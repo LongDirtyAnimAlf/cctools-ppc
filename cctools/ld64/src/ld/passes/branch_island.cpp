@@ -458,11 +458,12 @@ static std::vector<const ld::Atom*>* *regionsIslands;
 static unsigned int islandCount;
 
 static void makeIslandsForSection(const Options& opts, ld::Internal& state,
-								  ld::Internal::FinalSection* sect)
+								  ld::Internal::FinalSection* sect, unsigned stubCount)
 {
 	bool hasThumbBranches = sect->hasThumbBranches;
 	bool haveCrossSectionBranches = sect->hasCrossSectionBranches;
 	const bool preload = (opts.outputKind() == Options::kPreload);
+
 if (_s_log) fprintf(stderr, "ld: checking section %s\n", sect->sectionName());
 	
 	// create islands for branches in sect that are out of range
@@ -537,6 +538,8 @@ if (_s_log) fprintf(stderr, "ld: checking section %s\n", sect->sectionName());
 				if ( target->section().type() == ld::Section::typeStub )
 					dstAddr = furthestStubSect;
 				int64_t displacement = dstAddr - srcAddr;
+if (_s_log && (abs(displacement) > kBetweenRegions) ) fprintf(stderr, "from %s to %s delta : 0x%0" PRIx64 " in section %s\n",
+					atom->name(), target->name(), displacement, sect->sectionName());
 				TargetAndOffset finalTargetAndOffset = { target, addend };
 				const int64_t kBranchLimit = kBetweenRegions;
 				if ( crossSectionBranch && preload && ((displacement > kBranchLimit) || (displacement < (-kBranchLimit))) ) {
@@ -753,6 +756,9 @@ static bool mightNeedBranchIslands(const Options& opts, ld::Internal& state) {
 	if (((furthestCodeOrStubSect-lowestTextAddr) > textSizeWhenMightNeedBranchIslands(opts, seenThumbBr))
 	     && seenCrossSectBr)
 		anySectNeedsIslands = true;
+if (_s_log)
+fprintf (stderr, "TEXT seg size %" PRIu64 "M lowest Addr 0x%08" PRIx64 " furthest stub 0x%08" PRIx64 " furthest code or stub 0x%08" PRIx64 " %s islands\n",
+		 sizeOfTEXTSeg/(1024*1024), lowestTextAddr, furthestStubSect, furthestCodeOrStubSect, (anySectNeedsIslands? "needs" : "no"));
 	kBetweenRegions = maxDistanceBetweenIslands(opts, seenThumbBr);
 	return anySectNeedsIslands;
 }
@@ -776,6 +782,8 @@ void findIslandInsertionPoints(const Options& opts, ld::Internal& state) {
 			break; // Done.
 
 		if (sect->type() != ld::Section::typeCode) {
+fprintf(stderr, "**Want to insert branch island into non-code section %s/%s, wanted this address=0x%08" PRIu64 "\n",
+		sect->segmentName(), sect->sectionName(), previousIslandEndAddr + kBetweenRegions);
 		}
 
 		// We expect one of more islands in this section.
@@ -855,6 +863,14 @@ if ( _s_log ) fprintf(stderr, "ld: checking for poss branch isl.\n");
 		buildAddressMap(opts, state);
 	}
 
+	// scan sections for number of stubs
+	unsigned stubCount = 0;
+	for (std::vector<ld::Internal::FinalSection*>::iterator sit=state.sections.begin(); sit != state.sections.end(); ++sit) {
+		ld::Internal::FinalSection* sect = *sit;
+		if ( sect->type() == ld::Section::typeStub )
+			stubCount = sect->atoms.size();
+	}
+
 	// Build a list of regions into which branch islands can be inserted as required.
 	findIslandInsertionPoints(opts, state);
 
@@ -864,7 +880,7 @@ if ( _s_log ) fprintf(stderr, "ld: checking for poss branch isl.\n");
 		 sit != state.sections.end(); ++sit) {
 		ld::Internal::FinalSection* sect = *sit;
 		if ( sect->type() == ld::Section::typeCode ) 
-			makeIslandsForSection(opts, state, sect);
+			makeIslandsForSection(opts, state, sect, stubCount);
 	}
 
 	int regionIndex = 0;

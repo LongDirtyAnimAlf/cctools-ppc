@@ -60,7 +60,7 @@ char *argument) /* -dylib_file argument or "dylib table" */
     char *file_addr, *endp;
     struct dylib_table *new_dylib_table;
 
-	if((fd = open(file_name, O_RDONLY, 0)) == -1)
+	if((fd = open(file_name, O_RDONLY | O_BINARY, 0)) == -1)
 	    system_fatal("Can't open: %s for %s %s",
 		    file_name, flag, argument);
 	if(fstat(fd, &stat_buf) == -1)

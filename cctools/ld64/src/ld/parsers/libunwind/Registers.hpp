@@ -1325,11 +1325,11 @@ inline void Registers_arm64::setVectorRegister(int regNum, v128 value)
 }
 
 ///
-/// Registers_ppc holds the register state of a thread in a 64-bit PowerPC process.  
+/// Registers_ppc holds the register state of a thread in a 64-bit PowerPC process.
 ///
 class Registers_ppc64
 {
-public:	
+public:
 					Registers_ppc64();
 					Registers_ppc64(const void* registers);
 
@@ -1391,7 +1391,7 @@ private:
 		unsigned long long __ctr;	/* Count register */
 		unsigned int __vrsave;		/* Vector Save Register */
 	};
-	
+
 	struct ppc_float_state_t
 	{
 		double  __fpregs[32];
@@ -1402,24 +1402,24 @@ private:
 
 	ppc_thread_state64_t	fRegisters;
 	ppc_float_state_t		fFloatRegisters;
-	v128					fVectorRegisters[32];	// offset  
+	v128					fVectorRegisters[32];	// offset
 };
 
 
 
-inline Registers_ppc64::Registers_ppc64(const void* registers) 
+inline Registers_ppc64::Registers_ppc64(const void* registers)
 {
 	//COMPILE_TIME_ASSERT( sizeof(Registers_ppc64) < sizeof(unw_context_t) );
-	fRegisters = *((ppc_thread_state64_t*)registers); 
+	fRegisters = *((ppc_thread_state64_t*)registers);
 	fFloatRegisters = *((ppc_float_state_t*)((char*)registers+160));
 	memcpy(fVectorRegisters, ((char*)registers+424), sizeof(fVectorRegisters));
 }
 
-inline Registers_ppc64::Registers_ppc64() 
-{ 
-	bzero(&fRegisters, sizeof(fRegisters)); 
-	bzero(&fFloatRegisters, sizeof(fFloatRegisters)); 
-	bzero(&fVectorRegisters, sizeof(fVectorRegisters)); 
+inline Registers_ppc64::Registers_ppc64()
+{
+	bzero(&fRegisters, sizeof(fRegisters));
+	bzero(&fFloatRegisters, sizeof(fFloatRegisters));
+	bzero(&fVectorRegisters, sizeof(fVectorRegisters));
 }
 
 
@@ -1543,7 +1543,7 @@ inline uint64_t Registers_ppc64::getRegister(int regNum) const
 
 inline void Registers_ppc64::setRegister(int regNum, uint64_t value)
 {
-	//fprintf(stderr, "Registers_ppc::setRegister(%d, 0x%08X)\n", regNum, value);	
+	//fprintf(stderr, "Registers_ppc::setRegister(%d, 0x%08X)\n", regNum, value);
 	switch ( regNum ) {
 		case UNW_REG_IP:
 			fRegisters.__srr0 = value;
@@ -1770,16 +1770,16 @@ v128 Registers_ppc64::getVectorRegister(int regNum) const
 {
 	assert(validVectorRegister(regNum));
 	v128 result = fVectorRegisters[regNum-UNW_PPC_V0];
-	//fprintf(stderr, "Registers_ppc::getVectorRegister(this=%p, %d) => <0x%08X, 0x%08X, 0x%08X, 0x%08X> \n", 
+	//fprintf(stderr, "Registers_ppc::getVectorRegister(this=%p, %d) => <0x%08X, 0x%08X, 0x%08X, 0x%08X> \n",
 	//		this, regNum, result.vec[0], result.vec[1], result.vec[2], result.vec[3]);
 	return result;
 }
 
-void Registers_ppc64::setVectorRegister(int regNum, v128 value) 
+void Registers_ppc64::setVectorRegister(int regNum, v128 value)
 {
 	assert(validVectorRegister(regNum));
-	//fprintf(stderr, "Registers_ppc::setVectorRegister(this=%p, %d) <0x%08X, 0x%08X, 0x%08X, 0x%08X> => <0x%08X, 0x%08X, 0x%08X, 0x%08X> \n", 
-	//		this, regNum, fVectorRegisters[regNum-UNW_PPC_V0].vec[0], fVectorRegisters[regNum-UNW_PPC_V0].vec[1], fVectorRegisters[regNum-UNW_PPC_V0].vec[2], 
+	//fprintf(stderr, "Registers_ppc::setVectorRegister(this=%p, %d) <0x%08X, 0x%08X, 0x%08X, 0x%08X> => <0x%08X, 0x%08X, 0x%08X, 0x%08X> \n",
+	//		this, regNum, fVectorRegisters[regNum-UNW_PPC_V0].vec[0], fVectorRegisters[regNum-UNW_PPC_V0].vec[1], fVectorRegisters[regNum-UNW_PPC_V0].vec[2],
 	//			fVectorRegisters[regNum-UNW_PPC_V0].vec[3], value.vec[0], value.vec[1], value.vec[2], value.vec[3]);
 	fVectorRegisters[regNum-UNW_PPC_V0] = value;
 }

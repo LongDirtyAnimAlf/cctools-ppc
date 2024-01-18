@@ -56,7 +56,7 @@ uint32_t *size)
     struct stat stat_buf;
     char *strings, *p, *line;
 
-	if((fd = open(file, O_RDONLY)) < 0){
+	if((fd = open(file, O_RDONLY | O_BINARY)) < 0){
 	    system_error("can't open: %s", file);
 	    return;
 	}

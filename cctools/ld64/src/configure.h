@@ -10,6 +10,8 @@
 #include <string.h>
 #include <dlfcn.h>
 
+#include <cinttypes>
+
 #include "strlcat.h"
 #include "strlcpy.h"
 #include "helper.h"
@@ -17,6 +19,9 @@
 #ifdef __GLIBCXX__
 #include <algorithm>
 #endif
+
+#define LD64_VERSION_NUM 274
+#define XTOOLS_VERSION 1234
 
 #define CPU_SUBTYPE_X86_ALL     ((cpu_subtype_t)3)
 

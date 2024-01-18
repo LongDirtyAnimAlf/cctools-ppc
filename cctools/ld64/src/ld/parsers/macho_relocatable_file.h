@@ -49,6 +49,7 @@ struct ParserOptions {
 	ld::relocatable::File::SourceKind	srcKind;
 	bool			treateBitcodeAsData;
 	bool			usingBitcode;
+	uint8_t			maxDefaultCommonAlignment;
 	ld::MacVersionMin osxMin;
 };
 

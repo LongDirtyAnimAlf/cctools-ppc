@@ -1,7 +1,7 @@
 if ISDARWIN
-SUBDIRS=libstuff ar as misc otool ld64 $(LD_CLASSIC)
+SUBDIRS=libstuff ar as misc otool ld64
 else
-SUBDIRS=libstuff ar as misc ld64 $(LD_CLASSIC)
+SUBDIRS=libstuff ar as misc ld64
 endif
 
 ACLOCAL_AMFLAGS = -I m4

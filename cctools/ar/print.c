@@ -89,7 +89,7 @@ print(argv)
 	int afd, all;
 	char *file;
 
-	afd = open_archive(O_RDONLY);
+	afd = open_archive(O_RDONLY | O_BINARY);
 
 	/* Read from an archive, write to stdout; pad on read. */
 	SETCF(afd, archive, STDOUT_FILENO, "stdout", RPAD);

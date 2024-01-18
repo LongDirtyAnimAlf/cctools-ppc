@@ -98,7 +98,7 @@ contents(argv)
 	struct tm *tp;
 	char *file, buf[25];
 	
-	afd = open_archive(O_RDONLY);
+	afd = open_archive(O_RDONLY | O_BINARY);
 
 	for (all = !*argv; get_arobj(afd);) {
 		if (all)

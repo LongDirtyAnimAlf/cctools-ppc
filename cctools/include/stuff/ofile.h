@@ -63,6 +63,7 @@ struct ofile {
 
     struct fat_header *fat_header;  /* If a fat file these are filled in and */
     struct fat_arch *fat_archs;     /*  if needed converted to host byte sex */
+    struct fat_arch_64 *fat_archs64;
 
     /* If this is a fat file then these are valid and filled in */
     uint32_t narch;	    	    /* the current architecture */
@@ -71,22 +72,30 @@ struct ofile {
 				    /*  field is pointing at space malloc'ed */
 				    /*  by ofile_map. */
 
-    /* If this structure is currently referencing a thin archive and it has a
-       table of contents then these are valid and filled in */
+    /* If this structure is currently referencing an archive and it has a
+       table of contents then these are valid and filled in. */
     char *toc_addr;		    /* pointer to the toc contents */
     uint32_t toc_size;		    /* total size of the toc */
     struct ar_hdr *toc_ar_hdr;	    /* the archive header for the toc */
     char *toc_name;		    /* name of toc member */
     uint32_t toc_name_size;	    /* size of name of toc member */
-    struct ranlib *toc_ranlibs;     /* ranlib structs */
-    uint32_t       toc_nranlibs;    /* number of ranlib structs */
+    enum bool toc_is_32bit;	    /* TRUE if toc is 32-bit */
+    struct ranlib *toc_ranlibs;     /* 32-bit ranlib structs */
+    struct ranlib_64 *toc_ranlibs64; /* 64-bit ranlib_64 structs */
+    uint64_t       toc_nranlibs;    /* number of ranlib structs */
     char          *toc_strings;     /* strings of symbol names (for above) */
-    uint32_t       toc_strsize;     /* number of bytes for the strings above */
+    uint64_t       toc_strsize;     /* number of bytes for the strings above */
     enum bool	   toc_bad;	    /* the toc needs to be rebuilt */
+
+    /* If this structure is currently referencing a System V archive and it has
+       an archive member named "//" which holds the extended filenames then
+       these gets filled in after that member is seen. */
+    char *sysv_ar_strtab;
+    uint32_t sysv_ar_strtab_size;
 
     /* If this structure is currently referencing an archive member or an object
        file that is an archive member these are valid and filled in. */
-    uint32_t member_offset;         /* logical offset to the member starting */
+    uint64_t member_offset;         /* logical offset to the member starting */
     char *member_addr;      	    /* pointer to the member contents */
     uint32_t member_size;           /* actual size of the member (not rounded)*/
     struct ar_hdr *member_ar_hdr;   /* pointer to the ar_hdr for this member */
@@ -124,6 +133,11 @@ struct ofile {
     cpu_type_t mh_cputype;	    /* cpu specifier */
     cpu_subtype_t mh_cpusubtype;    /* machine specifier */
     uint32_t mh_filetype;	    /* type of file */
+
+    /* If this structure is currently referencing an xar member from the xar
+       file embedded in the (__LLVM,__bundle) section of the Mach-O file then
+       this is valid and filled in. */
+    const char *xar_member_name;
 
     /* If this structure is currently referencing an llvm bitcode file these are
        valid and filled in. */

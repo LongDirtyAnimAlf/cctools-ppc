@@ -101,7 +101,7 @@ extract(argv)
 	eval = 0;
 	tv[0].tv_usec = tv[1].tv_usec = 0;
 
-	afd = open_archive(O_RDONLY);
+	afd = open_archive(O_RDONLY | O_BINARY);
 
 	/* Read from an archive, write to disk; pad on read. */
 	SETCF(afd, archive, 0, 0, RPAD);

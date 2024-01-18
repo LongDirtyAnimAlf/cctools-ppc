@@ -340,7 +340,6 @@ fi
 AC_C_BIGENDIAN([AC_SUBST([ENDIAN_FLAG],[-D__BIG_ENDIAN__=1])],
       [AC_SUBST([ENDIAN_FLAG],[-D__LITTLE_ENDIAN__=1])])
 
-
 AC_CONFIG_FILES([Makefile libstuff/Makefile])
 AC_CONFIG_FILES([ar/Makefile])
 AC_CONFIG_FILES([as/Makefile])
@@ -349,11 +348,9 @@ AC_CONFIG_FILES([as/i386/Makefile])
 AC_CONFIG_FILES([as/x86_64/Makefile])
 AC_CONFIG_FILES([as/ppc/Makefile])
 AC_CONFIG_FILES([as/ppc64/Makefile])
-#AC_CONFIG_FILES([man/Makefile])
+##AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([misc/Makefile])
-
-AC_CONFIG_FILES([ld/Makefile])
-
+##AC_CONFIG_FILES([ld/Makefile])
 AC_CONFIG_FILES([ld64/Makefile])
 AC_CONFIG_FILES([ld64/src/Makefile])
 AC_CONFIG_FILES([ld64/src/3rd/Makefile])

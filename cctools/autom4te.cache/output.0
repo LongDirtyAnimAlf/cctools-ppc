@@ -18377,14 +18377,16 @@ fi
 
 
     if test "x$enable_lto_support" = "xyes"; then
-        if test "x$LLVM_CONFIG" = "xno"; then
-            for ac_prog in llvm-config                                    \
-                llvm-config-3.8 llvm-config-3.7 llvm-config-3.6 \
-                llvm-config-3.5 llvm-config-3.4 llvm-config-3.3 \
-                llvm-config-3.2 llvm-config-3.1                 \
-                llvm-config38 llvm-config37 llvm-config36       \
-                llvm-config35 llvm-config34 llvm-config33       \
-                llvm-config32 llvm-config31
+      if test "x$LLVM_CONFIG" = "xno"; then
+          for ac_prog in llvm-config                                              \
+               llvm-config-5.0 llvm-config-4.0                          \
+               llvm-config-3.9 llvm-config-3.8 llvm-config-3.7          \
+               llvm-config-3.6 llvm-config-3.5 llvm-config-3.4          \
+               llvm-config-3.3 llvm-config-3.2 llvm-config-3.1          \
+               llvm-config50 llvm-config40                              \
+               llvm-config39 llvm-config38 llvm-config37 llvm-config36  \
+               llvm-config35 llvm-config34 llvm-config33 llvm-config32  \
+               llvm-config31
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -18435,16 +18437,16 @@ fi
 done
 test -n "$LLVM_CONFIG" || LLVM_CONFIG="no"
 
-        fi
+      fi
 
-        if test "x$LLVM_CONFIG" != "xno"; then
-            LLVM_INCLUDE_DIR="`${LLVM_CONFIG} --includedir`"
-            LLVM_LIB_DIR="`${LLVM_CONFIG} --libdir`"
+      if test "x$LLVM_CONFIG" != "xno"; then
+        LLVM_INCLUDE_DIR="`${LLVM_CONFIG} --includedir`"
+        LLVM_LIB_DIR="`${LLVM_CONFIG} --libdir`"
 
-            ORIGLDFLAGS=$LDFLAGS
-            LDFLAGS="$LDFLAGS -L${LLVM_LIB_DIR}"
+        ORIGLDFLAGS=$LDFLAGS
+        LDFLAGS="$LDFLAGS -L${LLVM_LIB_DIR}"
 
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for lto_get_version in -lLTO" >&5
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for lto_get_version in -lLTO" >&5
 printf %s "checking for lto_get_version in -lLTO... " >&6; }
 if test ${ac_cv_lib_LTO_lto_get_version+y}
 then :
@@ -18481,26 +18483,30 @@ fi
 printf "%s\n" "$ac_cv_lib_LTO_lto_get_version" >&6; }
 if test "x$ac_cv_lib_LTO_lto_get_version" = xyes
 then :
-   LTO_LIB="-L${LLVM_LIB_DIR} -lLTO"
-               if test "x$rpathlink" = "xyes"; then
-                   LTO_RPATH="-Wl,-rpath,$LLVM_LIB_DIR,--enable-new-dtags"
-                   LTO_LIB="$LTO_LIB"
-               fi
-               LTO_DEF=-DLTO_SUPPORT
-               # DO NOT include the LLVM include dir directly,
-               # it may cause the build to fail.
-               cp -f $LLVM_INCLUDE_DIR/llvm-c/lto.h `dirname ${0}`/include/llvm-c/lto.h
-               
-               
-                
+  
+          LTO_LIB="-L${LLVM_LIB_DIR} -lLTO"
+          if test "x$rpathlink" = "xyes"; then
+            LTO_RPATH="-Wl,-rpath,$LLVM_LIB_DIR,--enable-new-dtags"
+          fi
+          if test "x$isdarwin" = "xyes"; then
+            LTO_RPATH="-Wl,-rpath,$LLVM_LIB_DIR"
+          fi
+          LTO_DEF=-DLTO_SUPPORT
+          # DO NOT include the LLVM include dir directly,
+          # it may cause the build to fail.
+          cp -f $LLVM_INCLUDE_DIR/llvm-c/lto.h `dirname ${0}`/include/llvm-c/lto.h
+          
+          
+          
+        
 fi
 
 
-            LDFLAGS=$ORIGLDFLAGS
-        else
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: llvm-config not found, disabling LTO support" >&5
+        LDFLAGS=$ORIGLDFLAGS
+      else
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: llvm-config not found, disabling LTO support" >&5
 printf "%s\n" "$as_me: WARNING: llvm-config not found, disabling LTO support" >&2;}
-        fi
+      fi
     fi
 
     
@@ -18820,7 +18826,6 @@ printf "%s\n" "@%:@define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
  esac
 
 
-
 ac_config_files="$ac_config_files Makefile libstuff/Makefile"
 
 ac_config_files="$ac_config_files ar/Makefile"
@@ -18837,13 +18842,10 @@ ac_config_files="$ac_config_files as/ppc/Makefile"
 
 ac_config_files="$ac_config_files as/ppc64/Makefile"
 
-#AC_CONFIG_FILES([man/Makefile])
+##AC_CONFIG_FILES([man/Makefile])
 ac_config_files="$ac_config_files misc/Makefile"
 
-
-ac_config_files="$ac_config_files ld/Makefile"
-
-
+##AC_CONFIG_FILES([ld/Makefile])
 ac_config_files="$ac_config_files ld64/Makefile"
 
 ac_config_files="$ac_config_files ld64/src/Makefile"
@@ -19995,7 +19997,6 @@ do
     "as/ppc/Makefile") CONFIG_FILES="$CONFIG_FILES as/ppc/Makefile" ;;
     "as/ppc64/Makefile") CONFIG_FILES="$CONFIG_FILES as/ppc64/Makefile" ;;
     "misc/Makefile") CONFIG_FILES="$CONFIG_FILES misc/Makefile" ;;
-    "ld/Makefile") CONFIG_FILES="$CONFIG_FILES ld/Makefile" ;;
     "ld64/Makefile") CONFIG_FILES="$CONFIG_FILES ld64/Makefile" ;;
     "ld64/src/Makefile") CONFIG_FILES="$CONFIG_FILES ld64/src/Makefile" ;;
     "ld64/src/3rd/Makefile") CONFIG_FILES="$CONFIG_FILES ld64/src/3rd/Makefile" ;;
