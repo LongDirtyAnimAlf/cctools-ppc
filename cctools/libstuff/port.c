@@ -452,15 +452,7 @@ char *find_executable(const char *name)
     return NULL;
 }
 
-
-#ifndef DISABLE_CLANG_AS
-char *find_clang()
-{
-    return(find_executable("clang"));
-}
-#endif /* ! DISABLE_CLANG_AS */
-
-#else
+#else  /* __APPLE__ */
 
 #ifndef DISABLE_CLANG_AS
 char *find_clang()

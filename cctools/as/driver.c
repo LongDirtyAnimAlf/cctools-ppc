@@ -16,6 +16,7 @@
 #include "stuff/errors.h"
 #include "stuff/execute.h"
 #include "stuff/allocate.h"
+#include "stuff/port.h" /* cctools-port: find_executable() */
 #include <mach-o/dyld.h>
 
 #if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__)
@@ -24,8 +25,6 @@
 
 /* used by error calls (exported) */
 char *progname = NULL;
-
-char *find_clang(); /* cctools-port */
 
 int
 main(
@@ -36,19 +35,22 @@ char **envp)
     const char *LIB = "../libexec/as/";
     const char *LOCALLIB = "../local/libexec/as/";
 
-	#if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__)
+    #if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__)
     const char *AS = "/as";
     const char *CLANG = "clang";
-	#else
-	const char *AS = "/as.exe";
+    #else
+    const char *AS = "/as.exe";
     const char *CLANG = "clang.exe";
-	#endif
+    #endif
 	
     //const char *LIB = ASLIBEXECDIR;
     //const char *LOCALLIB = ASLIBEXECDIR;
 
     //const char *LOCALLIB = "../libexec/gcc/darwin/";
     //const char *AS = "/as.exe";
+
+    //const char *LIB = "as/";
+    //const char *LOCALLIB = "../libexec/gcc/darwin/";
 
     int i, j;
     uint32_t count, verbose, run_clang;
@@ -172,6 +174,18 @@ char **envp)
 			    if(arch_name != NULL)
 				fatal("more than one %s option (not allowed, "
 				      "use cc(1) instead)", argv[i]);
+			    if (strcmp(argv[i+1],"powerpc") == 0)
+				argv[i+1] = "ppc";
+			    else if (strcmp(argv[i+1], "powerpc750") == 0)
+				argv[i+1] = "ppc750";
+			    else if (strcmp(argv[i+1], "powerpc7400") == 0)
+				argv[i+1] = "ppc7400";
+			    else if (strcmp(argv[i+1], "powerpc7450") == 0)
+				argv[i+1] = "ppc7450";
+			    else if (strcmp(argv[i+1], "powerpc970") == 0)
+				argv[i+1] = "ppc970";
+			    else if (strcmp(argv[i+1], "powerpc64") == 0)
+				argv[i+1] = "ppc64";
 			    arch_name = argv[i+1];
 			    p = " "; /* Finished with this arg. */
 			    i++;
@@ -320,11 +334,10 @@ char **envp)
 	    char *target_triple = getenv("CCTOOLS_CLANG_AS_TARGET_TRIPLE");
 #endif /* ! __APPLE__ */
 
-		as = makestr(prefix, CLANG, NULL);
+            as = makestr(prefix, CLANG, NULL);
 	    if(access(as, F_OK) != 0){
-	    	as = find_clang();
+                as = find_executable(CLANG);
 	    }
-
 	    if(!as || access(as, F_OK) != 0){
 			printf("%s: assembler (%s) not installed\n", progname,
 		       as ? as : "clang");

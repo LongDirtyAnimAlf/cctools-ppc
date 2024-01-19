@@ -1,4 +1,4 @@
-AC_INIT([cctools], [877.8], [t.poechtrager@gmail.com])
+AC_INIT([cctools], [895], [longdirtyanimalf@gmail.com])
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -23,7 +23,7 @@ if test "x$OBJCFLAGS" = "x"; then
   OBJCFLAGS="-O3"
 fi
 
-CXXFLAGS="$CXXFLAGS -std=c++0x"
+# CXXFLAGS="$CXXFLAGS -std=c++0x"
 
 if test "x$build" = "x$host"; then
   CFLAGS="$CFLAGS -isystem /usr/local/include -isystem /usr/pkg/include"
@@ -123,7 +123,7 @@ case "$CCVERSION" in
     WARNINGS="$WARNINGS -Wno-unused-but-set-variable -Wno-deprecated -Wno-deprecated-declarations"
     WARNINGS="$WARNINGS -Wno-char-subscripts -Wno-strict-aliasing"
     OBJCWARNINGS="-Wall"
-    CFLAGS="$CFLAGS -std=gnu99 -D__private_extern__="
+    CFLAGS="$CFLAGS -std=gnu11 -D__private_extern__="
     CXXFLAGS="$CXXFLAGS -D__private_extern__="
   ;;
 esac

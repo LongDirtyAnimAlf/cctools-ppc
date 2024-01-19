@@ -28,6 +28,10 @@ const char ldVersionString[] = "@(#)PROGRAM:ld  PROJECT:ld64-274.2\n";
 #include <sys/stat.h>
 #endif
 
+#if defined(__MINGW32__) || defined(__CYGWIN__)
+#include <windows.h>
+#endif
+
 #include "helper.h"
 
 void __assert_rtn(const char *func, const char *file, int line, const char *msg)
