@@ -1,10 +1,10 @@
 # Apple cctools port for Linux, *BSD and Windows (Cygwin) #
 
 Current Version: 895 + ld64-273.2.  
-Originally ported by [cjacker](http://ios-toolchain-based-on-clang-for-linux.googlecode.com).
-Based on:
-cctools-port by Thomas Pöchtrager [https://github.com/tpoechtrager/cctools-port]
-darwin-xtools by Iain Sandoe [https://github.com/iains/darwin-xtools]
+Originally ported by [cjacker](http://ios-toolchain-based-on-clang-for-linux.googlecode.com).  
+Based on:  
+cctools-port by Thomas Pöchtrager [https://github.com/tpoechtrager/cctools-port]  
+darwin-xtools by Iain Sandoe [https://github.com/iains/darwin-xtools]  
 
 ## SUPPORTED HOSTS ##
 
@@ -19,7 +19,7 @@ x86, x86_64, arm
 
 Untested, but compiles:
 
-aarch64, ppc, ppc64
+aarch64, ppc64
 
 ## SUPPORTED TARGET ARCHITECTURES ##
 
