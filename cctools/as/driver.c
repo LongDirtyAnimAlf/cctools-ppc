@@ -26,6 +26,20 @@
 /* used by error calls (exported) */
 char *progname = NULL;
 
+char *get_filename(char *str)
+{
+    char *p = strrchr(str, '/');
+    return p ? &p[1] : str;
+}
+
+char *get_target_arch(char *argv[])
+{
+    char *p = get_filename(argv[0]);
+	char *strPtr = strdup(p);
+	strPtr[strcspn(strPtr, "-")] = 0;
+	return strPtr;
+}
+
 int
 main(
 int argc,
@@ -36,11 +50,11 @@ char **envp)
     const char *LOCALLIB = "../local/libexec/as/";
 
     #if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__)
-    const char *AS = "/as";
-    const char *CLANG = "clang";
-    #else
     const char *AS = "/as.exe";
     const char *CLANG = "clang.exe";
+    #else
+    const char *AS = "/as";
+    const char *CLANG = "clang";
     #endif
 	
     //const char *LIB = ASLIBEXECDIR;
@@ -240,8 +254,13 @@ char **envp)
 		arch_name = arch_flag.name;
 	    }
 	    else
-		fatal("unknown host architecture (can't determine which "
-		      "assembler to run)");
+			arch_name = get_target_arch(argv);
+			printf("Assembler from name: %s.\n", arch_name);
+
+			if(arch_name == NULL){
+				fatal("unknown host architecture (can't determine which "
+		      		"assembler to run)");
+			}
 	}
 	else{
 	    /*
