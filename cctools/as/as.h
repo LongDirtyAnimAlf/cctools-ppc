@@ -60,6 +60,7 @@ extern char version_string[];
 #include <stdint.h>
 #import <stdio.h>
 #import <assert.h>
+#include "ansidecl.h"
 #import <mach/machine.h>
 
 /* These defines are potentially useful */

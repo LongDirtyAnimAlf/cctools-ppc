@@ -59,3 +59,13 @@ if [ "$OSTYPE" == "cygwin" ]; then
         cp /bin/cygwin1.dll $prefix/libexec/as/$astarget
     done 
 fi
+
+if [ "$OSTYPE" == "msys" ]; then
+    cp /bin/msys-2.0.dll $prefix/bin
+    cp /bin/msys-gcc_s-seh-1.dll $prefix/bin
+    cp /bin/msys-stdc++-6.dll $prefix/bin
+    for astarget in arm i386 ppc ppc64 x86_64; do
+        cp /bin/msys-gcc_s-seh-1.dll $prefix/libexec/as/$astarget
+        cp /bin/msys-2.0.dll $prefix/libexec/as/$astarget
+    done 
+fi

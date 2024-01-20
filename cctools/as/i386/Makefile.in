@@ -837,7 +837,7 @@ uninstall-am: uninstall-libexecPROGRAMS
 
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(libexecdir)/as/i386
-	mv $(DESTDIR)$(libexecdir)/*i386-as* $(DESTDIR)$(libexecdir)/as/i386/as
+	mv $(DESTDIR)$(libexecdir)/*i386-as* $(DESTDIR)$(libexecdir)/as/i386/as$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

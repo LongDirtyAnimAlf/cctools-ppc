@@ -11,4 +11,4 @@ i386_as_SOURCES =  ../app.c ../as.c ../atof-generic.c ../atof-ieee.c ../expr.c .
          ../symbols.c ../write_object.c ../xmalloc.c ../dwarf2dbg.c ../i386.c
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(libexecdir)/as/i386
-	mv $(DESTDIR)$(libexecdir)/*i386-as* $(DESTDIR)$(libexecdir)/as/i386/as
+	mv $(DESTDIR)$(libexecdir)/*i386-as* $(DESTDIR)$(libexecdir)/as/i386/as$(EXEEXT)

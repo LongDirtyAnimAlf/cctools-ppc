@@ -39,6 +39,11 @@ EXTRACXXFLAGS=""
 WARNINGS=""
 
 case $host_os in
+  *cygwin* ) iscygwin=yes;;
+	 * ) iscygwin=no;;
+esac
+
+case $host_os in
   darwin* )
     isdarwin=yes
     AM_CONDITIONAL([ISDARWIN], [true])
@@ -47,9 +52,10 @@ case $host_os in
     XCC="egcc"
     XCXX="eg++"
   ;;
-  cygwin* )
-    iscygwin=yes
+  *mingw* | *cygwin* | *msys* )
     EXTRAFLAGS="-D__LARGE64_FILES -D_GNU_SOURCE -fno-PIC"
+    # CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
+    # CFLAGS="$CFLAGS -D_GNU_SOURCE -D_BSD_SOURCE -fcommon"    
     WARNINGS="-Wno-attributes"
     XCC="gcc"
     XCXX="g++"

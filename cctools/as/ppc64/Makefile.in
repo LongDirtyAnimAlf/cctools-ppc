@@ -839,7 +839,7 @@ uninstall-am: uninstall-libexecPROGRAMS
 
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(libexecdir)/as/ppc64
-	mv $(DESTDIR)$(libexecdir)/*ppc64-as* $(DESTDIR)$(libexecdir)/as/ppc64/as
+	mv $(DESTDIR)$(libexecdir)/*ppc64-as* $(DESTDIR)$(libexecdir)/as/ppc64/as$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

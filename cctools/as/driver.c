@@ -49,22 +49,13 @@ char **envp)
     const char *LIB = "../libexec/as/";
     const char *LOCALLIB = "../local/libexec/as/";
 
-    #if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__)
+    #if defined(WINDOWS) || defined(_WIN32) || defined(__CYGWIN__) || defined(__MSYS__)
     const char *AS = "/as.exe";
     const char *CLANG = "clang.exe";
     #else
     const char *AS = "/as";
     const char *CLANG = "clang";
     #endif
-	
-    //const char *LIB = ASLIBEXECDIR;
-    //const char *LOCALLIB = ASLIBEXECDIR;
-
-    //const char *LOCALLIB = "../libexec/gcc/darwin/";
-    //const char *AS = "/as.exe";
-
-    //const char *LIB = "as/";
-    //const char *LOCALLIB = "../libexec/gcc/darwin/";
 
     int i, j;
     uint32_t count, verbose, run_clang;
@@ -255,7 +246,6 @@ char **envp)
 	    }
 	    else
 			arch_name = get_target_arch(argv);
-			printf("Assembler from name: %s.\n", arch_name);
 
 			if(arch_name == NULL){
 				fatal("unknown host architecture (can't determine which "

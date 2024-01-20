@@ -127,7 +127,7 @@ int _NSGetExecutablePath(char *epath, unsigned int *size)
   {
     *p = '/';
   }
-#if defined(__CYGWIN__)
+#if defined(__CYGWIN__) && !defined (__MSYS__)
   p = strchr(full_path, ':');
   if (p)
     *p = '/';

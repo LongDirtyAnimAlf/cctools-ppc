@@ -11,4 +11,4 @@ x86_64_as_SOURCES =  ../app.c ../as.c ../atof-generic.c ../atof-ieee.c ../expr.c
          ../symbols.c ../write_object.c ../xmalloc.c ../dwarf2dbg.c ../i386.c
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(libexecdir)/as/x86_64
-	mv $(DESTDIR)$(libexecdir)/*x86_64-as* $(DESTDIR)$(libexecdir)/as/x86_64/as
+	mv $(DESTDIR)$(libexecdir)/*x86_64-as* $(DESTDIR)$(libexecdir)/as/x86_64/as$(EXEEXT)

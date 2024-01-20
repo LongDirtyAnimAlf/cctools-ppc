@@ -23,5 +23,5 @@ $LIBTOOLIZE -c -i
 aclocal -I m4
 autoconf
 
-automake -a -c
+automake -a -c -fi
 

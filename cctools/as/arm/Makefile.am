@@ -11,4 +11,4 @@ arm_as_SOURCES =  ../app.c ../as.c ../atof-generic.c ../atof-ieee.c ../expr.c ..
          ../symbols.c ../write_object.c ../xmalloc.c ../dwarf2dbg.c ../arm.c
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(libexecdir)/as/arm
-	mv $(DESTDIR)$(libexecdir)/*arm-as* $(DESTDIR)$(libexecdir)/as/arm/as
+	mv $(DESTDIR)$(libexecdir)/*arm-as* $(DESTDIR)$(libexecdir)/as/arm/as$(EXEEXT)

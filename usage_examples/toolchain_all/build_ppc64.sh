@@ -4,7 +4,7 @@
 # set the target
 #---------------------------------------------------------------------------------
 
-target=powerpc-apple-darwin8
+target=powerpc64-apple-darwin8
 
 #---------------------------------------------------------------------------------
 # Source and Install directories
@@ -17,7 +17,7 @@ prefix=~/cctools-port/$target        # installation directory
 # set compiler flags
 #---------------------------------------------------------------------------------
 
-UNI_WARNINGS="-D_GNU_SOURCE -fcommon -Wno-return-local-addr -Wno-deprecated -Wno-attributes -Wno-maybe-uninitialized -Wno-narrowing  -Wno-address -Wall  -Wno-format -Wno-enum-compare -Wno-unused-result -Wno-unused-variable -Wno-unused-but-set-variable -Wno-deprecated -Wno-deprecated-declarations -Wno-char-subscripts -Wno-strict-aliasing -Wno-shift-negative-value -Wno-misleading-indentation -Wno-stringop-truncation  -Wno-parentheses"
+UNI_WARNINGS="-D_GNU_SOURCE -fcommon -Wno-sign-compare -Wno-return-local-addr -Wno-deprecated -Wno-attributes -Wno-maybe-uninitialized -Wno-narrowing  -Wno-address -Wall  -Wno-format -Wno-enum-compare -Wno-unused-result -Wno-unused-variable -Wno-unused-but-set-variable -Wno-deprecated -Wno-deprecated-declarations -Wno-char-subscripts -Wno-strict-aliasing -Wno-shift-negative-value -Wno-misleading-indentation -Wno-stringop-truncation  -Wno-parentheses"
 C_WARNINGS="-Wno-int-conversion -Wno-implicit-function-declaration -Wno-pointer-sign"
 
 export CFLAGS="-O2 $UNI_WARNINGS $C_WARNINGS"
@@ -43,9 +43,10 @@ make clean 2>&1 | tee cctools_make.log
 make all 2>&1 | tee cctools_make.log
 make install 2>&1 | tee cctools_install.log
 
-if [ "$OSTYPE" == "cygwinnn" ]; then
+if [ "$OSTYPE" == "cygwin" ]; then
     cp /bin/cygcrypto-1.1.dll $prefix/bin
     cp /bin/cyggcc_s-1.dll $prefix/bin
+    cp /bin/cyggcc_s-seh-1.dll $prefix/bin
     cp /bin/cygstdc++-6.dll $prefix/bin
     cp /bin/cygwin1.dll $prefix/bin
     cp /bin/cygz.dll $prefix/bin
@@ -53,7 +54,18 @@ if [ "$OSTYPE" == "cygwinnn" ]; then
     cp /bin/cygintl-8.dll $prefix/bin
     cp /bin/cygiconv-2.dll $prefix/bin
     for astarget in arm i386 ppc ppc64 x86_64; do
-        cp /bin/cyggcc_s-1.dll $prefix/libexec/gcc/darwin/$astarget
-        cp /bin/cygwin1.dll $prefix/libexec/gcc/darwin/$astarget
+        cp /bin/cyggcc_s-1.dll $prefix/libexec/as/$astarget
+        cp /bin/cyggcc_s-seh-1.dll $prefix/libexec/as/$astarget
+        cp /bin/cygwin1.dll $prefix/libexec/as/$astarget
+    done 
+fi
+
+if [ "$OSTYPE" == "msys" ]; then
+    cp /bin/msys-2.0.dll $prefix/bin
+    cp /bin/msys-gcc_s-seh-1.dll $prefix/bin
+    cp /bin/msys-stdc++-6.dll $prefix/bin
+    for astarget in arm i386 ppc ppc64 x86_64; do
+        cp /bin/msys-gcc_s-seh-1.dll $prefix/libexec/as/$astarget
+        cp /bin/msys-2.0.dll $prefix/libexec/as/$astarget
     done 
 fi

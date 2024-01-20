@@ -12,4 +12,4 @@ ppc64_as_SOURCES =  ../app.c ../as.c ../atof-generic.c ../atof-ieee.c ../expr.c 
 
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(libexecdir)/as/ppc64
-	mv $(DESTDIR)$(libexecdir)/*ppc64-as* $(DESTDIR)$(libexecdir)/as/ppc64/as
+	mv $(DESTDIR)$(libexecdir)/*ppc64-as* $(DESTDIR)$(libexecdir)/as/ppc64/as$(EXEEXT)
